@@ -1,0 +1,118 @@
+Service:
+  RegionId: cn-hangzhou
+  DeployType: ros
+  TenantType: SingleTenant
+  DeployMetadata:
+    ServiceInstanceNameRule:
+      Prefix: mysql
+    SupplierDeployMetadata:
+      RoleName: ${RoleName}
+      SupplierTemplateConfigs:
+        - Name: 单机版
+          Url: 'templates/template.yaml'
+          PredefinedParameters:
+            - Name: 低配版
+              Parameters:
+                EcsInstanceType: ecs.c6.large
+                SlbInstanceType: slb.s1.small
+              Type: Noraml
+              OrderList:
+                - EcsInstanceType
+                - SlbInstanceType
+            - Name: 基础版
+              Parameters:
+                EcsInstanceType: ecs.c6.xlarge
+                SlbInstanceType: slb.s1.small
+              Type: Noraml
+              OrderList:
+                - EcsInstanceType
+                - SlbInstanceType
+            - Name: 高配版
+              Parameters:
+                EcsInstanceType: ecs.c6.2xlarge
+                SlbInstanceType: slb.s3.small
+              Type: Noraml
+              OrderList:
+                - EcsInstanceType
+                - SlbInstanceType
+          HiddenParameterKeys:
+            - EcsIntanceType
+            - SlbInstanceType
+            - VpcId
+            - VSwitchId
+          ParameterMappings:
+            - ParameterKey: RegionId
+              ParameterMappingKeys:
+                - VpcId
+              ParameterValueMapping:
+                cn-hangzhou:
+                  Parameters:
+                    VpcId: ${VpcId}
+                  ParameterMappings:
+                    - ParameterKey: ZoneId
+                      ParameterMappingKeys:
+                        - VSwitchId
+                      ParameterValueMapping:
+                        ${ZoneId}:
+                          Parameters:
+                            VSwitchId: ${VSwitchId}
+      FileArtifactRelation:
+        '{{ computenest::file::MySQL }}':
+          ArtifactId: ${Artifact.Artifact_1.ArtifactId}
+          ArtifactVersion: ${Artifact.Artifact_1.ArtifactVersion}
+    TemplateConfigs:
+      - Name: 单机版
+        Url: templates/parameters.yaml
+        AllowedRegions:
+          - cn-hangzhou
+        PredefinedParameters:
+        - Name: 低配版
+          Parameters:
+            EcsInstanceType: ecs.c6.large
+            SlbInstanceType: slb.s1.small
+          Type: Noraml
+          OrderList:
+            - EcsInstanceType
+            - SlbInstanceType
+        - Name: 基础版
+          Parameters:
+            EcsInstanceType: ecs.c6.xlarge
+            SlbInstanceType: slb.s1.small
+          Type: Noraml
+          OrderList:
+            - EcsInstanceType
+            - SlbInstanceType
+        - Name: 高配版
+          Parameters:
+            EcsInstanceType: ecs.c6.2xlarge
+            SlbInstanceType: slb.s3.small
+          Type: Noraml
+          OrderList:
+            - EcsInstanceType
+            - SlbInstanceType
+    NetworkMetadata:
+      EnablePrivateVpcConnection: true
+      PrivateVpcConnectionMode: PrivateLink
+      PrivateVpcConnectionType: DynamicTemplate
+      PrivateVpcConnections:
+        - Name: default
+          NetworkDynamicTemplateSource: TEMPLATE_RESOURCE
+          NetworkDynamicTemplateResourceType: SLB
+          DynamicTemplateParameterKey: Slb
+          Payer: Endpoint
+  ServiceType: managed
+  ServiceInfo:
+    Locale: zh-CN
+    ShortDescription: mysql demo
+    Image: 'icons/service_logo.jpg'
+    Name: MySQL托管版beta1
+  ShareType: Public
+  ApprovalType: Manual
+Artifact:
+  Artifact_1:
+    ArtifactType: File
+    ArtifactName: MySQL
+    Description: MySQL
+    ArtifactProperty:
+      RegionId: cn-hangzhou
+      Url: 'artifacts/mysql-community-release-el6-5.noarch.rpm'
