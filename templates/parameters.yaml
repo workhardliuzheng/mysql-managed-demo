@@ -1,13 +1,6 @@
 ROSTemplateFormatVersion: "2015-09-01"
 Parameters:
-  # 可用区
-  ZoneId:
-    Type: String
-    AssociationProperty: ALIYUN::ECS::Instance:ZoneId
-    Label:
-      en: VSwitch Available Zone
-      zh-cn: 可用区
-    # 数据库root账户密码
+  # 数据库root账户密码
   Password:
     # 查询该参数时只输出星号（*）
     NoEcho: true
@@ -33,8 +26,3 @@ Metadata:
         Label:
           en: Basic Configuration
           zh-cn: 基础配置
-      - Parameters:
-          - ZoneId
-        Label:
-          en: Network Configuration
-          zh-cn: 网络配置

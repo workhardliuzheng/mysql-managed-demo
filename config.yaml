@@ -43,22 +43,19 @@ Service:
             - SlbInstanceType
             - VpcId
             - VSwitchId
+            - ZoneId
           ParameterMappings:
             - ParameterKey: RegionId
               ParameterMappingKeys:
                 - VpcId
+                - ZoneId
+                - VSwitchId
               ParameterValueMapping:
                 cn-hangzhou:
                   Parameters:
                     VpcId: ${VpcId}
-                  ParameterMappings:
-                    - ParameterKey: ZoneId
-                      ParameterMappingKeys:
-                        - VSwitchId
-                      ParameterValueMapping:
-                        ${ZoneId}:
-                          Parameters:
-                            VSwitchId: ${VSwitchId}
+                    ZoneId: ${ZoneId}
+                    VSwitchId: ${VSwitchId}
       FileArtifactRelation:
         '{{ computenest::file::MySQL }}':
           ArtifactId: ${Artifact.Artifact_1.ArtifactId}
