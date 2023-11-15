@@ -14,11 +14,11 @@ Parameters:
     NoEcho: true
     Type: String
     Description:
-      en: 'Database root account passwor, 8-32 characters, including uppercase and lowercase letters, numbers and special symbols (including: !@#$%^&*-+=_).'
-      zh-cn: 数据库root账户密码，长度8-32个字符，可包含大小字母、数字及特殊符号（包含：!@#$%^&*-+=_）。
+      en: 'Database root and admin account password, 8-32 characters, including uppercase and lowercase letters, numbers and special symbols (including: !@#$%^&*-+=_).'
+      zh-cn: 数据库root和admin账户密码，长度8-32个字符，可包含大小字母、数字及特殊符号（包含：!@#$%^&*-+=_）。
     Label:
-      en: Root Account Password
-      zh-cn: 数据库root账户密码
+      en: root and admin Account Password
+      zh-cn: 数据库root和admin账户密码
     ConstraintDescription:
       en: '8-32 characters, including uppercase and lowercase letters, numbers and special symbols (including: !@#$%^&*-+=_).'
       zh-cn: 8-32个字符，可包含大小字母、数字及特殊符号（包含：!@#$%^&*-+=_）。
@@ -275,7 +275,7 @@ Outputs:
   EndpointServiceId:
     Description:
       en: EndpointService Id
-      zh-cn: 终端节点服务Id。
+      zh-cn: 终端节点服务Id
     Value:
       Fn::GetAtt:
         - VpcEndpointService
@@ -286,6 +286,11 @@ Outputs:
         - ''
         - - Ref: ALIYUN::StackName
           - .mysql.com
+  MysqlUserName:
+    Description:
+      en: MySQL User Name
+      zh-cn: MySQL登录用户名
+    Value: admin
 # 定义元数据
 Metadata:
   ALIYUN::ROS::Interface:
