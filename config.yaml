@@ -14,7 +14,7 @@ Service:
           PredefinedParameters:
             - Name: 低配版
               Parameters:
-                EcsInstanceType: ecs.c6.large
+                EcsInstanceType: ['ecs.c6.large']
                 SlbInstanceType: slb.s1.small
               Type: Noraml
               OrderList:
@@ -22,7 +22,7 @@ Service:
                 - SlbInstanceType
             - Name: 基础版
               Parameters:
-                EcsInstanceType: ecs.c6.xlarge
+                EcsInstanceType: ['ecs.c6.xlarge']
                 SlbInstanceType: slb.s1.small
               Type: Noraml
               OrderList:
@@ -30,7 +30,7 @@ Service:
                 - SlbInstanceType
             - Name: 高配版
               Parameters:
-                EcsInstanceType: ecs.c6.2xlarge
+                EcsInstanceType: ['ecs.c6.2xlarge']
                 SlbInstanceType: slb.s3.small
               Type: Noraml
               OrderList:
