@@ -6,6 +6,7 @@ Service:
     ServiceInstanceNameRule:
       Prefix: mysql
     SupplierDeployMetadata:
+      UserType: Aliyun
       RoleName: ${RoleName}
       SupplierTemplateConfigs:
         - Name: 单机版
