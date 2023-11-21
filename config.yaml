@@ -91,11 +91,11 @@ Service:
     NetworkMetadata:
       EnablePrivateVpcConnection: true
       EnableReversePrivateVpcConnection: false
-      PrivateZoneName: ${ServiceInstanceId}.computenest.aliyuncs.com
       PrivateVpcConnectionMode: PrivateLink
       PrivateVpcConnectionType: DynamicTemplate
       PrivateVpcConnections:
         - Name: default
+          PrivateZoneName: ${ServiceInstanceId}.computenest.aliyuncs.com
           NetworkDynamicTemplateSource: TEMPLATE_RESOURCE
           NetworkDynamicTemplateResourceType: SLB
           DynamicTemplateParameterKey: Slb
