@@ -90,6 +90,8 @@ Service:
             - SlbInstanceType
     NetworkMetadata:
       EnablePrivateVpcConnection: true
+      EnableReversePrivateVpcConnection: false
+      PrivateZoneName: ${ServiceInstanceId}.computenest.aliyuncs.com
       PrivateVpcConnectionMode: PrivateLink
       PrivateVpcConnectionType: DynamicTemplate
       PrivateVpcConnections:

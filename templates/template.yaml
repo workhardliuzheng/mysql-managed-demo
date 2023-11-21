@@ -280,12 +280,6 @@ Outputs:
       Fn::GetAtt:
         - VpcEndpointService
         - ServiceId
-  Endpoint:
-    Value:
-      Fn::Join:
-        - ''
-        - - Ref: ALIYUN::StackName
-          - .mysql.com
   MysqlUserName:
     Description:
       en: MySQL User Name
