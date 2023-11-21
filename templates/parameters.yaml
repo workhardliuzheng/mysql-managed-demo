@@ -17,6 +17,12 @@ Parameters:
     MinLength: '8'
     MaxLength: '32'
     AssociationProperty: ALIYUN::ECS::Instance::Password
+  ZoneId:
+    Type: String
+    AssociationProperty: ALIYUN::ECS::Instance:ZoneId
+    Label:
+      en: VSwitch Available Zone
+      zh-cn: 可用区
 Metadata:
   ALIYUN::ROS::Interface:
     # 定义资源分组，创建服务实例时，同一分组的参数分布在一起
