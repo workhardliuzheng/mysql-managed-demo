@@ -32,3 +32,10 @@ Metadata:
         Label:
           en: Basic Configuration
           zh-cn: 基础配置
+      - Parameters:
+          - ZoneId
+          - VpcId
+          - VSwitchId
+        Label:
+          en: Network Configuration
+          zh-cn: 网络配置
