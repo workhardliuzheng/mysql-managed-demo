@@ -104,19 +104,19 @@ Service:
           DynamicTemplateParameterKey: Slb
           Payer: Endpoint
   ServiceType: managed
-#  OperationMetadata:
-#    ModifyParametersConfig:
-#      - TemplateName: 单机版
-#        Operation:
-#          - Name: 网络变配
-#            Description: 网络变配支持VPC私网变更和自定义域名变更
-#            Type: Custom
-#            SupportPredefinedParameters: false
-#            EnablePrivateVpcConnection: true
-#            EnablePrivateZoneName: true
-#            EnableReversePrivateVpcConnection: false
-#            EnableReversePrivateZoneName: false
-#            EnableLogging: false
+  OperationMetadata:
+    ModifyParametersConfig:
+      - TemplateName: 单机版
+        Operation:
+          - Name: 网络变配
+            Description: 网络变配支持VPC私网变更和自定义域名变更
+            Type: Custom
+            SupportPredefinedParameters: false
+            EnablePrivateVpcConnection: true
+            EnablePrivateZoneName: true
+            EnableReversePrivateVpcConnection: false
+            EnableReversePrivateZoneName: false
+            EnableLogging: false
   ServiceInfo:
     Locale: zh-CN
     ShortDescription: mysql demo
