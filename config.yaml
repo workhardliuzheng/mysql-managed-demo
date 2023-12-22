@@ -17,7 +17,7 @@ Service:
               Parameters:
                 EcsInstanceType: ['ecs.c6.large']
                 SlbInstanceType: slb.s1.small
-              Type: Noraml
+              Type: Normal
               OrderList:
                 - EcsInstanceType
                 - SlbInstanceType
@@ -26,7 +26,7 @@ Service:
               Parameters:
                 EcsInstanceType: ['ecs.c6.xlarge']
                 SlbInstanceType: slb.s1.small
-              Type: Noraml
+              Type: Normal
               OrderList:
                 - EcsInstanceType
                 - SlbInstanceType
@@ -35,7 +35,7 @@ Service:
               Parameters:
                 EcsInstanceType: ['ecs.c6.2xlarge']
                 SlbInstanceType: slb.s3.small
-              Type: Noraml
+              Type: Normal
               OrderList:
                 - EcsInstanceType
                 - SlbInstanceType
@@ -73,21 +73,21 @@ Service:
         - Name: 低配版
           Parameters: {}
           Description: 该套餐采用了2vCPU 4GB内存的ECS实例（ecs.c6.large），并且绑定了SLB（slb.s1.small），满足基本的业务需求。
-          Type: Noraml
+          Type: Normal
           OrderList:
             - EcsInstanceType
             - SlbInstanceType
         - Name: 基础版
           Parameters: {}
           Description: 该套餐采用了4vCPU 8GB内存的ECS实例（ecs.c6.xlarge），并且绑定了SLB（slb.s1.small），该配置可以满足大部分的业务需求。
-          Type: Noraml
+          Type: Normal
           OrderList:
             - EcsInstanceType
             - SlbInstanceType
         - Name: 高配版
           Parameters: {}
           Description: 该套餐采用了8vCPU 16GB内存的ECS实例（ecs.c6.2xlarge），并且绑定了SLB（slb.s3.small），该配置使用了更高规格ECS和SLB，进一步提升了架构的稳定性和性能。
-          Type: Noraml
+          Type: Normal
           OrderList:
             - EcsInstanceType
             - SlbInstanceType
