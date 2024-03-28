@@ -3,7 +3,7 @@
 ## 服务说明
 
 本文介绍基于MySQL软件包快速构建托管版单租户计算巢服务，关于计算巢托管版可以参考[帮助文档](https://help.aliyun.com/zh/compute-nest/create-a-fully-managed-service?spm=a2c4g.11174283.0.i5)，
-本示例采用ECS+SLB的架构，并默认开启了私网打通，用户部署服务实例后，可以直接通过内网访问部署在服务商的MySQL，除此之外还配置了三种套餐，分别为：
+本示例采用ECS+SLB的架构，默认支持私网打通、网络变配与磁盘扩容功能。用户部署服务实例后，可以直接通过内网访问部署在服务商的MySQL，除此之外还配置了三种套餐，分别为：
 
 | 套餐名 | SLB规格        | ECS规格族         | vCPU与内存          | 系统盘               | 公网带宽      |
 |-----|--------------|----------------|------------------|-------------------|-----------|
@@ -84,11 +84,13 @@
 0. 部署链接
    ![image.png](部署链接.jpg)
 1. 单击部署链接，进入服务实例部署界面，根据界面提示，填写参数完成部署。
-   ![image.png](部署参数.jpg)
-   这里还需要填写网络信息，私网连接的终端节点将在该可用区创建
+   ![image.png](新版部署参数.jpg)
+   网络设置部分如果填写网络信息，私网连接的终端节点将在该可用区创建。
+
+   注：由于本服务开启了网络变配功能，若此处不开启私网连接，也可通过变配功能开启。详情见变配流程-变配私网连接。
    ![网络配置.png](网络配置.png)
-2. 参数填写完成后可以看到对应询价明细，确认参数后点击**下一步：确认订单**。
-   ![image.png](询价明细.jpg)
+2. 参数填写完成后点击**下一步：确认订单**确认参数。
+   ![image.png](创建参数确认.jpg)
 3. 确认订单完成后同意服务协议并点击**立即创建**
    进入部署阶段。
    ![image.png](提交成功.png)
@@ -114,6 +116,56 @@
            ![通过ip访问.png](通过ip访问.png)
         3. 通过可用区域名访问：
            ![通过可用区域名访问.png](通过可用区域名访问.png)
+## 变配流程
+        
+### 说明
+本服务默认开启支持变配私网连接、支持数据盘扩容。
+
+私网连接变配：用户可以通过变配开启/关闭/新增/删除私网连接；
+
+数据盘扩容：用户可通过变配扩容数据盘容量。
+
+### 变配私网连接步骤
+
+0. 前提说明：本变配示例为用户在创建服务实例时未开启私网连接，在服务实例创建完成后需要开启。
+![创建服务实例未开启私网连接.jpg](创建服务实例未开启私网连接.jpg)
+   用户已有服务实例未开启私网连接。
+![服务实例未开启私网连接.jpg](服务实例未开启私网连接.jpg)
+1. 点击右上角 **修改配置** 进入变配服务实例页面，选择**网络变配**。
+![修改配置-网络变配.jpg](修改配置-网络变配.jpg)
+2. 点击**下一步**进入**设置修改参数**，添加私网连接参数。
+![设置修改参数-网络变配.jpg](设置修改参数-网络变配.jpg)
+![设置修改参数-添加网络变配信息.jpg](设置修改参数-添加网络变配信息.jpg)
+3. 点击**下一步**预览变配内容。
+![预览参数-网络变配.jpg](预览参数-网络变配.jpg)
+4. 点击**确定**开始执行变配，等待变配完成。
+![服务实例变配中.jpg](服务实例变配中.jpg)
+5. 变配完成，服务实例状态变为已部署，进入网络配置可见新增的私网连接信息。之后便可通过**部署流程**步骤5所述完成连接。
+![服务实例变配完成-网络变配.jpg](服务实例变配完成-网络变配.jpg)
+后续若需要关闭/新增/删除私网访问等其他操作，同样可以通过修改配置-网络变配完成。
+
+### 磁盘容量扩容步骤
+
+0. 前提说明 
+   1. 本变配示例为用户扩容磁盘容量，服务模板中将"扩容磁盘容量"变配类型设置为升配，即仅能扩容；
+   2. 为使磁盘可变配与脚本可执行，服务模板中资源EcsInstanceGroup参数UpdatePolicy需设置为ForAllInstances，资源RunCommand参数Sync需设置为true。
+   以上参数模板中均已配置好，此处仅告知。
+1. 点击右上角 **修改配置** 进入变配服务实例页面，选择**磁盘容量扩容**。
+![修改配置-磁盘扩容.jpg](修改配置-磁盘扩容.jpg)
+2. 点击**下一步**进入**设置修改参数**，将原有磁盘容量从200GB修改为400GB。
+![设置修改参数-磁盘扩容.jpg](设置修改参数-磁盘扩容.jpg)
+3. 点击**下一步**预览变配参数。
+![预览参数-磁盘扩容.jpg](预览参数-磁盘扩容.jpg)
+4. 点击确定开始执行变配，等待变配完成。
+![服务实例变配中.jpg](服务实例变配中.jpg)
+5. 变配完成，服务实例状态变为已部署。
+6. 查看结果：进入服务端ECS 通过命令 df -h 查看，磁盘容量已修改:
+
+    变配前：
+![变配前数据盘容量.jpg](变配前数据盘容量.jpg)
+变配后：
+![变配后数据盘容量.jpg](变配后数据盘容量.jpg)
+
 
 ## 服务详细说明
 
@@ -184,6 +236,18 @@ VSwitchId:
  Label:
    en: VSwitch ID
    zh-cn: 交换机实例ID
+# 数据盘大小
+DataDiskSize:
+ Description:
+   zh-cn: ECS实例数据盘大小，单位为GiB。取值范围：100~32768
+   en: 'ECS Instance disk size, range of values: 100-32768, units: GB'
+ Default: 200
+ MaxValue: 32768
+ MinValue: 100
+ Label:
+   zh-cn: 数据盘空间
+   en: Data Disk Space
+ Type: Number
 # Ecs实例类型
 EcsInstanceType:
  Type: String
@@ -232,20 +296,9 @@ EcsInstanceGroup:
    DiskMappings:
      - Category: cloud_essd
        Device: /dev/xvdb
-       Size: 200
+       Size: 
+         Ref: DataDiskSize
    SystemDiskSize: 40
-   # cloud-init执行用户命令
-   # /var/log/cloud-init.log /var/log/cloud-init-output.log 可以看到执行日志
-   # /var/lib/cloud/instance/scripts/part-001 为具体的脚本 可以sh 执行来排查问题
-   UserData:
-     Fn::Sub:
-       - |
-         #!/bin/sh
-
-         # sleep一段时间确保网络就绪
-         sleep 10
-
-         # 以下省略，具体可以看templates/template.yaml
    # 付费方式：按量付费
    InstanceChargeType: PostPaid
    MaxAmount: 1
@@ -273,6 +326,139 @@ EcsInstanceGroup:
    # 是否为实例分配公网IP
    AllocatePublicIP: true
    InternetMaxBandwidthOut: 1
+# ECS执行脚本
+  RunCommand:
+    Type: ALIYUN::ECS::RunCommand
+    Properties:
+      CommandContent:
+        Fn::Sub:
+          - |
+            #!/bin/sh
+            FLAG_FILE="/root/.disk_initialized"
+            PARTITION=/dev/vdb1
+            MOUNT_POINT=/data1
+            
+            if [ ! -f "$FLAG_FILE" ]; then
+              # cloud-init执行用户命令
+              # /var/log/cloud-init.log /var/log/cloud-init-output.log 可以看到执行日志
+              # /var/lib/cloud/instance/scripts/part-001 为具体的脚本 可以sh 执行来排查问题
+            
+              # sleep一段时间确保网络就绪
+              sleep 10
+              
+              # 对数据盘进行分区
+              
+              cat >> /root/InitDataDisk.sh << EOF
+              #!/bin/bash
+              echo "p
+              n
+              p
+              
+              
+              
+              w
+              " |  fdisk -u /dev/vdb
+            EOF
+              /bin/bash /root/InitDataDisk.sh
+              rm -f /root/InitDataDisk.sh
+              rm -f InitDataDisk.sh
+              # 在新分区上创建文件系统
+              mkfs.ext4 /dev/vdb1
+              # 创建目录，MySQL将安装在该目录下
+              mkdir /data1
+              # 挂载文件系统
+              mount /dev/vdb1 /data1
+              # 向 /etc/fstab 写入新分区信息
+              echo /dev/vdb1 /data1 ext4 defaults,nodelalloc,noatime 0 2 >> /etc/fstab
+              cd /data1/
+              
+              # 安装社区版MySQL
+              wget '{{ computenest::file::MySQL }}' -O mysql-community-release-el6-5.noarch.rpm
+              rpm -ivh mysql-community-release-el6-5.noarch.rpm
+              yum repolist all | grep mysql
+              yum install mysql-community-server -y
+              
+              # 启动MySQL服务
+              service mysqld start
+              
+              # 以超级用户身份登入，创建admin用户，并允许admin用户以Password为密码远程登录
+              mysqladmin -u root password '${Password}'
+              echo "create database test character set utf8 collate utf8_bin;" > ./test.sql
+              echo "CREATE USER 'admin'@'%' IDENTIFIED BY '${Password}';" >> ./test.sql
+              echo "GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%' WITH GRANT OPTION;" >> ./test.sql
+              mysql -u root -p'${Password}' < ./test.sql
+              
+              # 将MySQL的配置和数据路径移动到数据盘上
+              systemctl stop mysqld
+              rsync -av /var/lib/mysql /data1
+              # 修改配置文件
+              sed -i 's/\/var\/lib/\/data1/g' /etc/my.cnf
+              echo -e '\n' >> /etc/my.cnf
+              echo '[client]' >> /etc/my.cnf
+              echo 'port=3306' >> /etc/my.cnf
+              echo 'socket=/data1/mysql/mysql.sock' >> /etc/my.cnf
+              # 重启MySQL
+              systemctl start mysqld
+            
+              # 当初始化完成后，创建一个标志文件
+              touch "$FLAG_FILE"
+              echo "Initialization complete. Flag file created."
+              
+              # 执行成功回调WaitCondition结束WaitCondition的等待
+              ${CurlCli} -d "{\"Data\" : \"SUCCESS\", \"Status\" : \"SUCCESS\"}"
+              
+            else
+              # 标志文件存在，执行数据盘扩展操作
+              # sleep一段时间确保网络就绪
+              sleep 10
+            
+              # 停止MySQL服务
+              systemctl stop mysqld
+              
+              # 检查并确保分区未被挂载
+              if mountpoint -q $MOUNT_POINT; then
+                umount $MOUNT_POINT
+              fi
+              
+              # 使用 growpart 扩展分区
+              echo "Expanding partition..."
+              if ! growpart /dev/vdb 1; then
+                echo "Failed to expand partition"
+                exit 1
+              fi
+              
+              # 通知系统分区的更改
+              partprobe $PARTITION
+              
+              # 使用 e2fsck 检查文件系统
+              echo "Checking filesystem..."
+              e2fsck -f -y $PARTITION
+              
+              # 扩展文件系统
+              echo "Resizing filesystem..."
+              resize2fs $PARTITION
+              
+              # 重新挂载分区
+              echo "Remounting partition..."
+              mount $PARTITION $MOUNT_POINT
+              
+              # 启动MySQL服务
+              echo "Starting MySQL service..."
+              systemctl start mysqld
+            fi
+        # 获取到WaitConditionHandle的地址放到 ${CurlCli}变量里
+          - CurlCli:
+              Fn::GetAtt:
+                - WaitConditionHandle
+                - CurlCli
+            # 数据库root账户密码
+            Password:
+              Ref: Password
+      Type: RunShellScript
+      Timeout: 900
+      Sync: true
+      InstanceIds:
+        - Ref: EcsInstanceGroup
 Slb:
  Type: ALIYUN::SLB::LoadBalancer
  Properties:

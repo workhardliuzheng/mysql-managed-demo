@@ -117,6 +117,17 @@ Service:
             EnableReversePrivateVpcConnection: false
             EnableReversePrivateZoneName: false
             EnableLogging: false
+          - Name: 磁盘容量扩容
+            Description: 扩容磁盘容量
+            Type: Upgrade
+            Parameters:
+              - DataDiskSize
+            SupportPredefinedParameters: false
+            EnablePrivateVpcConnection: false
+            EnablePrivateZoneName: false
+            EnableReversePrivateVpcConnection: false
+            EnableReversePrivateZoneName: false
+            EnableLogging: false
   ServiceInfo:
     Locale: zh-CN
     ShortDescription: mysql demo
