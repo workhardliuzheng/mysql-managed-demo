@@ -117,6 +117,13 @@ Service:
             EnableReversePrivateVpcConnection: false
             EnableReversePrivateZoneName: false
             EnableLogging: false
+    StatusOperationConfigs:
+      - TemplateName: 单机版
+        DeployScene: ECS
+        SupportOperations:
+          - Start
+          - Stop
+          - Restart
   ServiceInfo:
     Locale: zh-CN
     ShortDescription: mysql demo
