@@ -106,26 +106,6 @@ Resources:
         Fn::Sub:
           - |
             #!/bin/sh
-
-            # sleep一段时间确保网络就绪
-            sleep 10
-            
-            InitDataDisk
-            InitFileSystem
-            cd /data1/
-            InstallMySQL
-            # 启动MySQL服务
-            service mysqld start
-            createAdminUser
-            # 将MySQL的配置和数据路径移动到数据盘上
-            systemctl stop mysqld
-            rsync -av /var/lib/mysql /data1
-            updateConfig
-            # 重启MySQL
-            systemctl start mysqld
-            # 执行成功回调WaitCondition结束WaitCondition的等待
-            ${CurlCli} -d "{\"Data\" : \"SUCCESS\", \"Status\" : \"SUCCESS\"}"
-            
             
             # 对数据盘进行分区
             function InitDataDisk() {
@@ -134,12 +114,12 @@ Resources:
                 echo "p
                 n
                 p
-    
-    
-    
+            
+            
+            
                 w
                 " |  fdisk -u /dev/vdb
-                EOF
+            EOF
             
                 /bin/bash /root/InitDataDisk.sh
                 rm -f /root/InitDataDisk.sh
@@ -166,22 +146,42 @@ Resources:
             }
             
             # 以超级用户身份登入，创建admin用户，并允许admin用户以Password为密码远程登录
-            function createAdminUser() {
+            function CreateAdminUser() {
                 mysqladmin -u root password '${Password}'
                 echo "create database test character set utf8 collate utf8_bin;" > ./test.sql
                 echo "CREATE USER 'admin'@'%' IDENTIFIED BY '${Password}';" >> ./test.sql
                 echo "GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%' WITH GRANT OPTION;" >> ./test.sql
+                echo "FLUSH PRIVILEGES;" >> ./test.sql
                 mysql -u root -p'${Password}' < ./test.sql
             }
             
             # 修改配置文件
-            function updateConfig() {
+            function UpdateConfig() {
                 sed -i 's/\/var\/lib/\/data1/g' /etc/my.cnf
                 echo -e '\n' >> /etc/my.cnf
                 echo '[client]' >> /etc/my.cnf
                 echo 'port=3306' >> /etc/my.cnf
                 echo 'socket=/data1/mysql/mysql.sock' >> /etc/my.cnf
             }
+
+            # sleep一段时间确保网络就绪
+            sleep 10
+            
+            InitDataDisk
+            InitFileSystem
+            cd /data1/
+            InstallMySQL
+            # 启动MySQL服务
+            service mysqld start
+            CreateAdminUser
+            # 将MySQL的配置和数据路径移动到数据盘上
+            systemctl stop mysqld
+            rsync -av /var/lib/mysql /data1
+            UpdateConfig
+            # 重启MySQL
+            systemctl start mysqld
+            # 执行成功回调WaitCondition结束WaitCondition的等待
+            ${CurlCli} -d "{\"Data\" : \"SUCCESS\", \"Status\" : \"SUCCESS\"}"
 
           # 获取到WaitConditionHandle的地址放到 ${CurlCli}变量里
           - CurlCli:
