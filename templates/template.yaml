@@ -63,6 +63,15 @@ Parameters:
     AllowedValues:
       - slb.s1.small
       - slb.s3.small
+  ConfigParam:
+    Type: String
+    Description:
+      zh-cn: 数据库配置参数
+      en: Database configuration parameters
+    Label:
+      zh-cn: 数据库配置参数
+      en: Database Configuration Parameter
+    Default: ''
 # 定义资源
 Resources:
   # 定义WaitCondition和WaitConditionHandle来等待命令在Ecs中执行完毕部署成功
@@ -74,6 +83,15 @@ Resources:
         Ref: WaitConditionHandle
       Timeout: 1800
   WaitConditionHandle:
+    Type: ALIYUN::ROS::WaitConditionHandle
+  RunCommandWaitCondition:
+    Type: ALIYUN::ROS::WaitCondition
+    Properties:
+      Count: 1
+      Handle:
+        Ref: RunCommandWaitConditionHandle
+      Timeout: 1800
+  RunCommandWaitConditionHandle:
     Type: ALIYUN::ROS::WaitConditionHandle
   EcsSecurityGroup:
     Type: 'ALIYUN::ECS::SecurityGroup'
@@ -218,6 +236,31 @@ Resources:
       # 是否为实例分配公网IP
       AllocatePublicIP: true
       InternetMaxBandwidthOut: 1
+  InstanceRunCommand:
+    Type: ALIYUN::ECS::RunCommand
+    DependsOn:
+      - EcsInstanceGroup
+      - WaitCondition
+    Properties:
+      Sync: true
+      CommandContent:
+        Fn::Sub:
+          - |
+            cat > /etc/my.cnf << "EOF"
+            ${ConfigParam}
+            EOF
+            systemctl restart mysqld
+            ${CurlCli} -d "{\"Data\" : \"SUCCESS\", \"Status\" : \"SUCCESS\"}"
+          - CurlCli:
+              Fn::GetAtt:
+                - RunCommandWaitConditionHandle
+                - CurlCli
+      Type: RunShellScript
+      InstanceIds:
+        Fn::GetAtt:
+          - EcsInstanceGroup
+          - InstanceIds
+      Timeout: '3000'
   Slb:
     Type: ALIYUN::SLB::LoadBalancer
     Properties:
