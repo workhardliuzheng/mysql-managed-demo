@@ -166,12 +166,13 @@ Service:
           - Name: 网络变配
             Description: 网络变配支持VPC私网变更和自定义域名变更
             Type: Custom
-            SupportPredefinedParameters: false
             EnablePrivateVpcConnection: true
             EnablePrivateZoneName: true
-            EnableReversePrivateVpcConnection: false
-            EnableReversePrivateZoneName: false
-            EnableLogging: false
+          - Name: 磁盘容量扩容
+            Description: 扩容磁盘容量
+            Type: Upgrade
+            Parameters:
+              - DataDiskSize
     StatusOperationConfigs:
       - TemplateName: 单机版
         DeployScene: ECS
