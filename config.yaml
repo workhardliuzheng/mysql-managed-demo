@@ -17,7 +17,7 @@ Service:
               Parameters:
                 EcsInstanceType: ['ecs.c6.large']
                 SlbInstanceType: slb.s1.small
-              Type: Noraml
+              Type: Normal
               OrderList:
                 - EcsInstanceType
                 - SlbInstanceType
@@ -26,7 +26,7 @@ Service:
               Parameters:
                 EcsInstanceType: ['ecs.c6.xlarge']
                 SlbInstanceType: slb.s1.small
-              Type: Noraml
+              Type: Normal
               OrderList:
                 - EcsInstanceType
                 - SlbInstanceType
@@ -35,7 +35,7 @@ Service:
               Parameters:
                 EcsInstanceType: ['ecs.c6.2xlarge']
                 SlbInstanceType: slb.s3.small
-              Type: Noraml
+              Type: Normal
               OrderList:
                 - EcsInstanceType
                 - SlbInstanceType
@@ -44,6 +44,7 @@ Service:
             - SlbInstanceType
             - VpcId
             - VSwitchId
+            - ConfigParam
           ParameterMappings:
             - ParameterKey: RegionId
               ParameterMappingKeys:
@@ -73,21 +74,21 @@ Service:
         - Name: 低配版
           Parameters: {}
           Description: 该套餐采用了2vCPU 4GB内存的ECS实例（ecs.c6.large），并且绑定了SLB（slb.s1.small），满足基本的业务需求。
-          Type: Noraml
+          Type: Normal
           OrderList:
             - EcsInstanceType
             - SlbInstanceType
         - Name: 基础版
           Parameters: {}
           Description: 该套餐采用了4vCPU 8GB内存的ECS实例（ecs.c6.xlarge），并且绑定了SLB（slb.s1.small），该配置可以满足大部分的业务需求。
-          Type: Noraml
+          Type: Normal
           OrderList:
             - EcsInstanceType
             - SlbInstanceType
         - Name: 高配版
           Parameters: {}
           Description: 该套餐采用了8vCPU 16GB内存的ECS实例（ecs.c6.2xlarge），并且绑定了SLB（slb.s3.small），该配置使用了更高规格ECS和SLB，进一步提升了架构的稳定性和性能。
-          Type: Noraml
+          Type: Normal
           OrderList:
             - EcsInstanceType
             - SlbInstanceType
@@ -104,7 +105,61 @@ Service:
           DynamicTemplateParameterKey: Slb
           Payer: Endpoint
   ServiceType: managed
+  IsSupportOperated: true
+  PolicyNames: "AliyunComputeNestPolicyForTerminalLogin"
   OperationMetadata:
+    ParameterConfigs:
+      - TemplateName: 单机版
+        Parameters:
+          max_allowed_packet:
+            Type: String
+            Description: mysql服务器允许最大接收数的据包大小
+            Default: '16M'
+            ConstraintDescription: 8M~32M
+          max_connections:
+            Type: Number
+            Description: 最大连接数
+            Default: '512'
+            ConstraintDescription: 256~1024
+          max_user_connections:
+            Type: Number
+            Default: '48'
+            Description: 用户最大的连接数
+            ConstraintDescription: 32~64
+          thread_cache_size:
+            Type: Number
+            Default: '16'
+            Description: 线程缓存
+            ConstraintDescription: 8,16,32,64
+        Metadata:
+          ParameterGroups:
+            - Parameters:
+                - max_allowed_packet
+                - max_connections
+                - max_user_connections
+                - thread_cache_size
+              TemplateParameter: ConfigParam
+              DefaultValue: |-
+                [mysqld]
+                datadir=/data1/mysql
+                socket=/data1/mysql/mysql.sock
+                max_allowed_packet  = 16M
+                max_connections  = 512
+                max_user_connections = 50
+                thread_cache_size = 16
+                symbolic-links=0
+                sql_mode=NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
+    
+                [mysqld_safe]
+                log-error=/var/log/mysqld.log
+                pid-file=/var/run/mysqld/mysqld.pid
+    
+                [client]
+                port=3306
+                socket=/data1/mysql/mysql.sock
+              Formatter: cnf
+              FormatterConfig:
+                SectionName: mysqld
     ModifyParametersConfig:
       - TemplateName: 单机版
         Operation:
@@ -118,6 +173,13 @@ Service:
             Type: Upgrade
             Parameters:
               - DataDiskSize
+    StatusOperationConfigs:
+      - TemplateName: 单机版
+        DeployScene: ECS
+        SupportOperations:
+          - Start
+          - Stop
+          - Restart
   ServiceInfo:
     Locale: zh-CN
     ShortDescription: mysql demo
