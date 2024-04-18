@@ -238,23 +238,33 @@ Resources:
             }
             
             expand_partition() {
-              # 使用 growpart 扩展分区
-              echo "Expanding partition..."
-              if ! growpart /dev/vdb 1; then
-                echo "Failed to expand partition"
-                exit 1
+              # 检查磁盘的实际大小和分区大小是否相同
+              DISK_SIZE=$(lsblk -brnd -o SIZE /dev/vdb)
+              PART_SIZE=$(($(lsblk -brnd -o SIZE /dev/vdb1) + 1073741000)) 
+            
+            
+              if [ "$DISK_SIZE" -gt "$PART_SIZE" ]; then
+                # 使用 growpart 扩展分区
+                echo "Expanding partition..."
+                if ! growpart /dev/vdb 1; then
+                  echo "Failed to expand partition"
+                  exit 1
+                fi
+            
+                # 通知系统分区的更改
+                partprobe $PARTITION
+            
+                # 使用 e2fsck 检查文件系统
+                echo "Checking filesystem..."
+                e2fsck -f -y $PARTITION
+            
+                # 扩展文件系统
+                echo "Resizing filesystem..."
+                resize2fs $PARTITION    
+            
+              else
+                echo "The partition size is equal to disk size. No need to expand."
               fi
-            
-              # 通知系统分区的更改
-              partprobe $PARTITION
-
-              # 使用 e2fsck 检查文件系统
-              echo "Checking filesystem..."
-              e2fsck -f -y $PARTITION
-            
-              # 扩展文件系统
-              echo "Resizing filesystem..."
-              resize2fs $PARTITION
             }
             
             if [ ! -f "$FLAG_FILE" ]; then
