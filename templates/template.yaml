@@ -339,6 +339,10 @@ Resources:
               Fn::GetAtt:
                 - RunCommandWaitConditionHandle
                 - CurlCli
+            ConfigParam:
+              Fn::Select:
+                - default
+                - Ref: ConfigParam
       Type: RunShellScript
       InstanceIds:
         Fn::GetAtt:
