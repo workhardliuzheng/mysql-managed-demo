@@ -341,7 +341,7 @@ Resources:
                 - CurlCli
             ConfigParam:
               Fn::Select:
-                - default
+                - mysql
                 - Ref: ConfigParam
       Type: RunShellScript
       InstanceIds:
